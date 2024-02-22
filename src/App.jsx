@@ -6,6 +6,7 @@ const App = () => {
   const [dollars, setDollars] = useState("");
   const [error, setError] = useState("");
   const [totalCents, setTotalCents] = useState("");
+  const [cents, setCents] = useState({});
 
   const handleDollarChange = (e) => {
     const userInput = e.target.value;
@@ -48,8 +49,27 @@ const App = () => {
     dollarsAmount = dollarsAmount === "" ? 0 : parseInt(dollars);
     centsAmount = parseInt(centsAmount.padEnd(2, "0").slice(0, 2));
 
-    setTotalCents(dollarsAmount * 100 + centsAmount);
+    const totalCentsAmount = dollarsAmount * 100 + centsAmount;
+    splitIntoDifferentCents(totalCentsAmount);
+
+    setTotalCents(totalCentsAmount);
     setError("");
+  };
+
+  const splitIntoDifferentCents = (totalCentsAmount) => {
+    const quarters = Math.floor(totalCentsAmount / 25);
+    totalCentsAmount %= 25;
+    const dimes = Math.floor(totalCentsAmount / 10);
+    totalCentsAmount %= 10;
+    const nickels = Math.floor(totalCentsAmount / 5);
+    const pennies = totalCentsAmount % 5;
+
+    setCents({
+      quarters,
+      dimes,
+      nickels,
+      pennies,
+    });
   };
 
   return (
@@ -92,11 +112,16 @@ const App = () => {
           </div>
         )}
         <div className="mt-2">
-          {totalCents && <p className="">Total Cents: {totalCents}</p>}
-          {/* <p className="">Quarters: 18</p>
-          <p className="">Dimes: 1</p>
-          <p className="">Nickels: 1</p>
-          <p className="">Pennies: 4</p> */}
+          {totalCents && (
+            <div>
+              <p className="mb-1">Total Cents: {totalCents}</p>
+              <p className="font-bold">Fewest Coins Required:</p>
+              <p>Quarters: {cents.quarters}</p>
+              <p>Dimes: {cents.dimes}</p>
+              <p>Nickels: {cents.nickels}</p>
+              <p>Pennies: {cents.pennies}</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
